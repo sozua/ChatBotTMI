@@ -38,10 +38,16 @@ async function iniciarJogo(canal, contexto) {
     }, 2 * 60 * 1000)
 }
 
+function resetarStats() {
+    palpitesFeitos = [];
+    jogoEmAndamento = false;
+    participantes = [];
+    palpitesRestantes = 5
+}
+
 function gameOver(canal, reason) {
     if(jogoEmAndamento) {
-        palpitesFeitos = [];
-        jogoEmAndamento = false;
+        resetarStats();
         if(reason === 'timeout') {
             client.say(canal, `O tempo acabou! A palavra misteriosa era ${palavra}!`);
             return;
@@ -51,19 +57,18 @@ function gameOver(canal, reason) {
 }
 
 function venceuOJogo(canal) {
-    palpitesFeitos = [];
-    jogoEmAndamento = false;
+    resetarStats();
     client.say(canal, `Parabéns! A palavra ${palavraOriginal} foi descoberta! Obrigado por participar ${participantes.join()}!`);
 }
 
 function realizarPalpite(canal, char) {
-    if (palpitesFeitos.includes(char)) {
+    if (palpitesFeitos.includes(char.toLowerCase())) {
         client.say(canal, `A letra ${char} já foi testada!`)
         return;
     }
     palpitesFeitos.push(char.toLowerCase());
 
-    if (!palavra.includes(char)) {
+    if (!palavra.includes(char.toLowerCase())) {
         palpitesRestantes--;
         if (palpitesRestantes <= 0) {
             gameOver(canal);
