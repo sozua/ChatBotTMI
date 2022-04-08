@@ -10,7 +10,7 @@ let palavraOriginal;
 let palavra;
 
 function getPalavra() {
-    return palavra?.split('')?.map((letra) => palpitesFeitos.includes(letra) || letra === '-' ? letra : "_").join('')
+    return palavra?.split('')?.map((letra) => palpitesFeitos.includes(letra) || letra === '-' ? letra : " _ ").join('')
 }
 
 async function randomizarPalavra() {
@@ -78,7 +78,7 @@ function realizarPalpite(canal, char) {
         return;
     }
 
-    if (!getPalavra().includes("_")) {
+    if (!getPalavra().includes(" _ ")) {
         venceuOJogo(canal)
         return;
     }
