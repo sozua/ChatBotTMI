@@ -1,6 +1,8 @@
 console.log('ferramentas ok');
 
 const tmi = require('tmi.js');
+const { carregarJogoDaForca } = require('./src/comandos/Forca');
+
 const nome_bot = 'botmudavidas'
 const canal = 'beatrrriste'
 const token = 'oauth:sr5wmer3yuv0ikzh63opelaxdti97d'
@@ -12,6 +14,9 @@ const opts = {
   },
   channels: [canal]
 };
+
+// Cria um cliente tmi com  nossas opções
+const client = new tmi.client(opts);
 
 const array = ['bairro', 'bistro', 'amparo']; // palavras aleatorias do letreco
 
@@ -30,6 +35,7 @@ function mensagemChegou(alvo, contexto, mensagem, ehBot) {
   if (ehBot) {
     return; //se for mensagens do nosso bot ele não faz nada
   }
+
   const nomeDoComando = mensagem.trim();// remove espaço em branco da mensagem para verificar o comando
   // checando o nosso comando
  switch(contexto['message-type']) {
@@ -113,12 +119,12 @@ function entrouNoChatDaTwitch(endereco, porta) {
   console.log(`* Bot entrou no endereço ${endereco}:${porta}`);
 }
 
-// Cria um cliente tmi com  nossas opções
-const client = new tmi.client(opts);
-
 // Registra nossas funções
 client.on('message', mensagemChegou);
 client.on('connected', entrouNoChatDaTwitch);
+
+// Jogos
+carregarJogoDaForca(client);
 
 client.on("subscription", (alvo, username, method, message, userstate) => {
     client.say(` Hey @${username} obrigado por se inscrever, se quiser pode me mandar !zap no sussurro que lhe mandarei o link do grupo do canal`);
