@@ -38,6 +38,8 @@ function mensagemChegou(alvo, contexto, mensagem, ehBot) {
 
   const nomeDoComando = mensagem.trim();// remove espaço em branco da mensagem para verificar o comando
   // checando o nosso comando
+
+
  switch(contexto['message-type']) {
   case "chat":
   if (nomeDoComando === '!letreco') {      //tudo quebrado so to usando esse if pra guardar oq ja fiz
@@ -97,20 +99,11 @@ function mensagemChegou(alvo, contexto, mensagem, ehBot) {
     client.say(alvo, "ok");
     client.disconnect();
   }
+
+
   break;
   case "whisper":
     console.log(`sussuro recebido ${mensagem}`);
-  
-  
-    if(mensagem === "!zap"){   // quebrado nao avalia se o usuario é ou nao sub e falta conseguir fazer o cliente enviar o link por whisper
-      console.log(contexto.username);
-      if(contexto.subscriber === true){
-        console.log('usuario é sub enviar link')
-      } else {
-        console.log('desculpa vi aqui que vc nao é sub')
-      }
-      
-    }
     break;
 }
 }
@@ -126,11 +119,13 @@ client.on('connected', entrouNoChatDaTwitch);
 // Jogos
 carregarJogoDaForca(client);
 
-client.on("subscription", (alvo, username, method, message, userstate) => {
-    client.say(` Hey @${username} obrigado por se inscrever, se quiser pode me mandar !zap no sussurro que lhe mandarei o link do grupo do canal`);
-  
+client.on("subscription", (alvo, contexto, method, message, userstate) => {
+    client.say(` Hey @${contexto.username} obrigado por se inscrever`);
   });
-
+  client.on("resub", (channel, contexto, months, message, userstate, methods) => {
+    let cumulativeMonths = ~~userstate["msg-param-cumulative-months"];
+    client.say(`@${contexto.username} deu resub de ${cumulativeMonths}`);
+});
 
 // Connecta na Twitch:
 client.connect();
