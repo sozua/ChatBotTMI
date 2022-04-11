@@ -57,8 +57,8 @@ function gameOver(canal, reason) {
 }
 
 function venceuOJogo(canal) {
-    resetarStats();
     client.say(canal, `Parabéns! A palavra ${palavraOriginal} foi descoberta! Obrigado por participar ${participantes.join()}!`);
+    resetarStats();
 }
 
 function realizarPalpite(canal, char) {
