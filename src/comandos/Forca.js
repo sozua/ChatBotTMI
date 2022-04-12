@@ -4,7 +4,8 @@ let client;
 let palpitesRestantes = 5;
 let palpitesFeitos = [];
 let jogoEmAndamento = false;
-let participantes = []
+let participantes = [];
+let timeout;
 
 let palavraOriginal;
 let palavra;
@@ -33,7 +34,7 @@ async function iniciarJogo(canal, contexto) {
         client.say(canal, `${contexto['display-name']}, você iniciou o jogo da forca, descubra a palavra em 2 minutos: ${getPalavra()}`);
     });
 
-    setTimeout(() => {
+    timeout = setTimeout(() => {
         gameOver(canal, 'timeout');
     }, 2 * 60 * 1000)
 }
@@ -42,7 +43,8 @@ function resetarStats() {
     palpitesFeitos = [];
     jogoEmAndamento = false;
     participantes = [];
-    palpitesRestantes = 5
+    palpitesRestantes = 5;
+    clearTimeout(timeout);
 }
 
 function gameOver(canal, reason) {
@@ -57,7 +59,7 @@ function gameOver(canal, reason) {
 }
 
 function venceuOJogo(canal) {
-    client.say(canal, `Parabéns! A palavra ${palavraOriginal} foi descoberta! Obrigado por participar ${participantes.join()}!`);
+    client.say(canal, `Parabéns! A palavra ${palavraOriginal} foi descoberta! Obrigado por participar ${participantes.join(', ')}!`);
     resetarStats();
 }
 
