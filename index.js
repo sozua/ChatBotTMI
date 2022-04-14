@@ -2,9 +2,10 @@ console.log('ferramentas ok');
 
 const tmi = require('tmi.js');
 const { carregarJogoDaForca } = require('./src/comandos/Forca');
+const { Palavras } = require('./src/utils/palavras');
 
 const nome_bot = 'botmudavidas'
-const canal = 'beatrrriste'
+const canal = 'diogo__souza'
 const token = 'oauth:sr5wmer3yuv0ikzh63opelaxdti97d'
 
 const opts = {
@@ -117,7 +118,11 @@ client.on('message', mensagemChegou);
 client.on('connected', entrouNoChatDaTwitch);
 
 // Jogos
-carregarJogoDaForca(client);
+const palavrasInstance = Palavras.getInstance();
+
+palavrasInstance.carregarPalavras().then((palavras) => {
+  carregarJogoDaForca(client);
+});
 
 client.on("subscription", (alvo, contexto, method, message, userstate) => {
     client.say(` Hey @${contexto.username} obrigado por se inscrever`);

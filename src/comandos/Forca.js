@@ -1,4 +1,4 @@
-const fs = require('fs/promises')
+const {Palavras} = require("../utils/palavras");
 
 let client;
 let palpitesRestantes = 5;
@@ -11,15 +11,17 @@ let palavraOriginal;
 let palavra;
 
 function getPalavra() {
-    return palavra?.split('')?.map((letra) => palpitesFeitos.includes(letra) || letra === '-' ? letra : " _ ").join('')
+    return palavra?.split('')?.map((letra, index) => palpitesFeitos.includes(letra) || letra === '-' ? palavraOriginal[index] : " _ ").join('')
 }
 
-async function randomizarPalavra() {
+function randomizarPalavra() {
     try {
-        const data = await fs.readFile('./src/data/palavras-forca.txt', 'utf-8');
-        const palavras = data.toString().replace('\r', '').split('\n');
-    
-        let palavraAleatoria = palavras[Math.floor(Math.random() * palavras.length)]
+        const palavrasInstance = Palavras.getInstance();
+        let palavraAleatoria = palavrasInstance.listarPalavras[Math.floor(Math.random() * palavrasInstance.contarPalavras)]?.replace('\n', '')
+        if(palavraAleatoria.length <= 3) {
+            randomizarPalavra();
+            return;
+        }
         palavraOriginal = palavraAleatoria.replace('\n', '').replace('\r', '');
         palavra = palavraOriginal?.toLowerCase()?.normalize("NFD")?.replace(/\p{Diacritic}/gu, "");
     } catch(err) {
@@ -30,13 +32,12 @@ async function randomizarPalavra() {
 async function iniciarJogo(canal, contexto) {
     palpitesFeitos = [];
     jogoEmAndamento = true;
-    randomizarPalavra().then(() => {
-        client.say(canal, `${contexto['display-name']}, você iniciou o jogo da forca, descubra a palavra em 2 minutos: ${getPalavra()}`);
-    });
+    randomizarPalavra();
+    client.say(canal, `${contexto['display-name']}, você iniciou o jogo da forca, descubra a palavra em 2 minutos: ${getPalavra()}`);
 
     timeout = setTimeout(() => {
         gameOver(canal, 'timeout');
-    }, 2 * 60 * 1000)
+    }, 2 * 60 * 1000);
 }
 
 function resetarStats() {
